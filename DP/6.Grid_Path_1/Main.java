@@ -1,62 +1,42 @@
 import java.io.*;
+import java.util.Arrays;
 
 public class Main {
 
     static final int MOD = 1_000_000_007;
 
     public static void main(String[] args) throws Exception {
-
-        BufferedReader br = new BufferedReader(
-                new InputStreamReader(System.in)
-        );
-
-        // Read grid size
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int n = Integer.parseInt(br.readLine().trim());
 
-        // Store the grid (using 1-based indexing)
-        char[][] grid = new char[n + 1][n + 1];
+        char[][] grid = new char[n][n];
 
-        // Read each row of the grid
-        for (int i = 1; i <= n; i++) {
-            String row = br.readLine().trim();
-
-            for (int j = 1; j <= n; j++) {
-                grid[i][j] = row.charAt(j - 1);
-            }
+        for (int i = 0; i < n; i++) {
+            grid[i] = br.readLine().toCharArray();
+        }
+        int[][] dp =  new int[n][n];
+        for(int[] row : dp) {
+            Arrays.fill(row, -1);
         }
 
-        // dp[i][j] = number of ways to reach cell (i, j)
-        int[][] dp = new int[n + 1][n + 1];
+        System.out.println(paths(grid, 0, 0, n, dp));
+    }
 
-        // Start with 1 way if starting cell is not blocked
-        if (grid[1][1] != '*') {
-            dp[1][1] = 1;
+    private static int paths(char[][] grid, int i, int j, int n, int[][] dp) {
+        if (i >= n || i < 0 || j >= n || j < 0 || grid[i][j] == '*') {
+            return 0;
+        }
+        if(dp[i][j] != -1) {
+            return dp[i][j];
         }
 
-        // Calculate paths for every cell
-        for (int i = 1; i <= n; i++) {
-            for (int j = 1; j <= n; j++) {
-
-                // Starting cell is already initialized
-                if (i == 1 && j == 1) continue;
-
-                // Cannot reach a blocked cell
-                if (grid[i][j] == '*') {
-                    dp[i][j] = 0;
-                    continue;
-                }
-
-                // Add paths coming from the top
-                if (i > 1) {
-                    dp[i][j] = (dp[i][j] + dp[i - 1][j]) % MOD;
-                }
-
-                // Add paths coming from the left
-                if (j > 1) {
-                    dp[i][j] = (dp[i][j] + dp[i][j - 1]) % MOD;
-                }
-            }
+        if (i == n - 1 && j == n - 1) {
+            return 1;
         }
-        System.out.println(dp[n][n]);
+
+        int pathFromDown = paths(grid, i + 1, j, n, dp);
+        int pathFromRight = paths(grid, i, j + 1, n, dp);
+
+        return dp[i][j] = (pathFromDown + pathFromRight) % MOD;
     }
 }

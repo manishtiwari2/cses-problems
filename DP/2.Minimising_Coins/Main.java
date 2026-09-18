@@ -39,8 +39,7 @@ public class Main {
                      * dp[sum - coin] tells us the minimum coinsneeded for the remaining sum.
                      * +1 because we are using the current coin. We take minimum among all possible coins.
                      */
-                    dp[sum] = Math.min(dp[sum], dp[sum - coin] + 1
-                    );
+                    dp[sum] = Math.min(dp[sum], dp[sum - coin] + 1);
                 }
             }
         }
